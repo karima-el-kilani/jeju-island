@@ -2,7 +2,7 @@
 
 Portail des activités nature et patrimoine de l'île de Jeju.
 
-Projet WordPress — parcours ENI « Le développement d'applications à l'aide d'un CMS », niveau D2WM.
+Projet WordPress | parcours ENI « Le développement d'applications à l'aide d'un CMS », niveau D2WM.
 
 ## Contenu du dépôt
 
