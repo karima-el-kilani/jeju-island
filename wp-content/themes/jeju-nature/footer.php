@@ -1,31 +1,47 @@
 <?php
 /**
- * The template for displaying the footer
+ * Le pied de page.
  *
- * Contains the closing of the #content div and all content after.
- *
- * @link https://developer.wordpress.org/themes/basics/template-files/#template-partials
+ * Ferme la structure HTML ouverte dans header.php.
  *
  * @package Jeju_Nature
  */
 
 ?>
 
-	<footer id="colophon" class="site-footer">
-		<div class="site-info">
-			<a href="<?php echo esc_url( __( 'https://wordpress.org/', 'jeju-nature' ) ); ?>">
-				<?php
-				/* translators: %s: CMS name, i.e. WordPress. */
-				printf( esc_html__( 'Proudly powered by %s', 'jeju-nature' ), 'WordPress' );
-				?>
-			</a>
-			<span class="sep"> | </span>
-				<?php
-				/* translators: 1: Theme name, 2: Theme author. */
-				printf( esc_html__( 'Theme: %1$s by %2$s.', 'jeju-nature' ), 'jeju-nature', '<a href="https://github.com/karima-el-kilani">Karima El Kilani</a>' );
-				?>
-		</div><!-- .site-info -->
-	</footer><!-- #colophon -->
+<footer id="colophon" class="site-footer">
+    <div class="site-info">
+
+        <p class="jn-footer-titre"><?php bloginfo( 'name' ); ?></p>
+
+        <p>
+            Association Jeju Nature — Seogwipo, île de Jeju<br>
+            Sorties nature encadrées par des bénévoles.
+        </p>
+
+        <p class="jn-footer-liens">
+            <?php
+            // Le lien n'est affiché que si une page de confidentialité est publiée.
+            if ( get_privacy_policy_url() ) :
+                ?>
+                <a href="<?php echo esc_url( get_privacy_policy_url() ); ?>">
+                    Politique de confidentialité
+                </a>
+            <?php
+            endif;
+            ?>
+        </p>
+
+        <p class="jn-footer-copyright">
+            <?php
+            // date( 'Y' ) : l'année en cours, recalculée à chaque affichage.
+            echo esc_html( '© ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' ) );
+            ?>
+        </p>
+
+    </div><!-- .site-info -->
+</footer><!-- #colophon -->
+
 </div><!-- #page -->
 
 <?php wp_footer(); ?>

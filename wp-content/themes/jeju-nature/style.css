@@ -887,10 +887,6 @@ textarea {
 	display: none;
 }
 
-/* Re-display the Theme Footer when Infinite Scroll has reached its end. */
-.infinity-end.neverending .site-footer {
-	display: block;
-}
 
 /*--------------------------------------------------------------
 # Utilities
@@ -966,4 +962,237 @@ textarea {
 	margin-left: auto;
 	margin-right: auto;
 	margin-bottom: 1.5em;
+}
+
+/*--------------------------------------------------------------
+# Jeju Island — charte du projet
+--------------------------------------------------------------*/
+
+/* --- 1. La palette : toutes mes couleurs au même endroit --- */
+:root {
+	--jn-blanc:      #FFFFFF;
+	--jn-gris-clair: #F7F7F8; /* bandeaux et sections */
+	--jn-gris-pied:  #FAFAFA; /* pied de page */
+	--jn-bleu-pale:  #EAF1FE; /* encadrés d'information */
+	--jn-bleu:       #1B64F2; /* LA couleur : liens, boutons, état actif */
+	--jn-bleu-fonce: #1449B8; /* survol, texte sur fond pâle */
+	--jn-texte:      #111111;
+	--jn-gris:       #71717A; /* dates, lieux, secondaire */
+	--jn-filet:      #EBEBED; /* bordures et séparations */
+	--jn-largeur:   1180px;   /* largeur maximale du contenu */
+}
+
+/* --- 2. Base du document --- */
+body {
+	font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+	color: var(--jn-texte);
+	background-color: var(--jn-blanc);
+	line-height: 1.65; /* interligne = 1,65 × la taille du texte */
+}
+
+/* --- 3. Le conteneur centré ---
+   Les quatre zones de ma page sont limitées en largeur et centrées.
+   Les noms viennent de la structure réelle d'Underscores :
+   header.site-header · main.site-main · aside.widget-area · footer.site-footer */
+.site-header > *,
+.site-main,
+.widget-area,
+.site-footer > * {
+	max-width: var(--jn-largeur);
+	margin-left: auto;   /* auto des deux côtés = centré */
+	margin-right: auto;
+	padding-left: 1.5rem;  /* de l'air sur les bords, indispensable sur mobile */
+	padding-right: 1.5rem;
+}
+
+/* --- 4. L'en-tête : blanc, séparé par un filet fin --- */
+.site-header {
+	background-color: var(--jn-blanc);
+	border-bottom: 1px solid var(--jn-filet);
+	padding-top: 1.3rem;
+	padding-bottom: 1.1rem;
+}
+
+.site-title {
+	margin: 0; /* on annule la marge par défaut du navigateur */
+	font-size: 1.5rem;
+	font-weight: 800;
+	letter-spacing: -0.01em;
+}
+
+.site-title a {
+	color: var(--jn-texte);
+	text-decoration: none; /* pas de soulignement */
+}
+
+.site-title a:hover,
+.site-title a:focus {
+	color: var(--jn-bleu);
+}
+
+.site-description {
+	margin: 0.2rem 0 0;
+	color: var(--jn-gris);
+	font-size: 0.92rem;
+}
+
+/* --- 5. Le menu --- */
+.main-navigation {
+	margin-top: 1.1rem;
+}
+
+.main-navigation ul {
+	gap: 2rem;        /* l'espace entre les entrées */
+	flex-wrap: wrap;  /* si ça ne tient pas en largeur, ça passe à la ligne */
+	margin: 0;
+	padding: 0;
+}
+
+.main-navigation a {
+	color: #3F3F46;
+	font-weight: 600;
+	font-size: 0.94rem;
+	padding-bottom: 0.55rem;
+	border-bottom: 3px solid transparent; /* trait invisible réservé d'avance :
+	                                          évite que la page saute au survol */
+}
+
+.main-navigation a:hover,
+.main-navigation a:focus,
+.main-navigation .current-menu-item > a {
+	color: var(--jn-bleu);
+	border-bottom-color: var(--jn-bleu);
+}
+
+/* Le bouton hamburger — Underscores ne l'affiche qu'en dessous de 600 px */
+.menu-toggle {
+	background-color: var(--jn-blanc);
+	border: 1px solid var(--jn-filet);
+	color: var(--jn-texte);
+	border-radius: 6px;
+	padding: 0.55rem 1rem;
+	font-size: 0.88rem;
+	font-weight: 600;
+	cursor: pointer; /* le curseur devient une main au survol */
+}
+
+/* --- 6. La zone de contenu --- */
+.site-main {
+	padding-top: 3.2rem;
+	padding-bottom: 3.2rem;
+}
+
+.site-main a {
+	color: var(--jn-bleu);
+}
+
+.site-main a:hover,
+.site-main a:focus {
+	color: var(--jn-bleu-fonce);
+}
+
+/* --- 7. Titres du contenu --- */
+.entry-title,
+.page-title {
+	font-size: 2.1rem;
+	font-weight: 800;
+	line-height: 1.25;
+}
+
+.entry-title a,
+.page-title a {
+	color: var(--jn-texte);
+	text-decoration: none;
+}
+
+/* --- 8. La colonne de widgets --- */
+.widget-area {
+	padding-top: 2.4rem;
+	padding-bottom: 2.4rem;
+	border-top: 1px solid var(--jn-filet);
+	font-size: 0.92rem;
+}
+
+.widget-area .widget-title {
+	font-size: 1.05rem;
+	font-weight: 700;
+}
+
+/* --- 9. Le pied de page --- */
+.site-footer {
+	background-color: var(--jn-gris-pied);
+	border-top: 1px solid var(--jn-filet);
+	color: #52525B;
+	padding-top: 2.4rem;
+	padding-bottom: 2.4rem;
+	margin-top: 3rem;
+	font-size: 0.88rem;
+}
+
+.site-footer a {
+	color: var(--jn-bleu-fonce);
+	font-weight: 600;
+}
+
+/* --- 10. Classes réutilisables ---
+   Je les appliquerai sur mes propres éléments à l'étape 1.5. */
+
+/* Le bouton d'action : « Réserver ma place » */
+.jn-bouton {
+	display: inline-block;
+	background-color: var(--jn-bleu);
+	color: var(--jn-blanc);
+	padding: 0.75rem 1.5rem;
+	border-radius: 6px;
+	font-size: 0.85rem;
+	font-weight: 700;
+	text-decoration: none;
+}
+
+.jn-bouton:hover,
+.jn-bouton:focus {
+	background-color: var(--jn-bleu-fonce);
+	color: var(--jn-blanc);
+}
+
+/* L'encadré d'information : « En bref » */
+.jn-encadre {
+	background-color: var(--jn-bleu-pale);
+	border-radius: 8px;
+	padding: 1.4rem 1.6rem;
+	margin: 1.8rem 0;
+}
+
+/* L'étiquette de niveau posée sur une photo : Facile / Moyen / Difficile */
+.jn-niveau {
+	display: inline-block;
+	background-color: var(--jn-texte);
+	color: var(--jn-blanc);
+	font-size: 0.7rem;
+	font-weight: 700;
+	padding: 0.25rem 0.6rem;
+	border-radius: 4px;
+}
+
+/* Les métadonnées : lieu · date · durée · places */
+.jn-meta {
+	color: var(--jn-gris);
+	font-size: 0.88rem;
+}
+
+/* --- 11. Le contenu du pied de page --- */
+.site-footer p {
+	margin: 0 0 0.6rem;
+}
+
+.jn-footer-titre {
+	font-size: 1.15rem;
+	font-weight: 800;
+	color: var(--jn-texte);
+}
+
+.jn-footer-copyright {
+	margin-top: 1.2rem;
+	color: var(--jn-gris);
+	font-size: 0.82rem;
 }
