@@ -1,0 +1,21 @@
+# Par défaut, on ignore tout
+/*
+
+# …sauf ces éléments
+!/.gitignore
+!/README.md
+!/documentation/
+!/wp-content/
+
+# Dans wp-content, on ne garde que thèmes, extensions et médias
+/wp-content/*
+!/wp-content/themes/
+!/wp-content/plugins/
+!/wp-content/uploads/
+
+# …et parmi eux, uniquement les nôtres
+/wp-content/themes/*
+!/wp-content/themes/jeju-nature/
+
+/wp-content/plugins/*
+!/wp-content/plugins/jeju-nature-reservations/
