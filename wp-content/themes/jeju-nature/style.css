@@ -1188,3 +1188,28 @@ body {
 .site-main a.jn-bouton {
 	color: var(--jn-blanc);
 }
+
+/* --- 13. Messages de retour du formulaire --- */
+.jn-message {
+	padding: 1rem 1.25rem;
+	margin-bottom: 1.5rem;
+	border-left: 4px solid;
+	border-radius: 4px;
+}
+
+.jn-message-succes {
+	background-color: var(--jn-bleu-pale);
+	border-left-color: var(--jn-bleu);
+	color: var(--jn-texte);
+}
+
+.jn-message-erreur {
+	background-color: #FDECEC;
+	border-left-color: #C0392B;
+	color: var(--jn-texte);
+}
+
+/* L'étoile des champs obligatoires. */
+.jn-obligatoire {
+	color: #C0392B;
+}

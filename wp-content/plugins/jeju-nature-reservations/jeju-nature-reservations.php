@@ -390,6 +390,8 @@ function jnr_fabriquer_formulaire( $activite_id ) {
     ob_start();
     ?>
 
+    <?php echo jnr_message_resultat(); // Déjà échappé dans la fonction. ?>
+
     <form class="jn-formulaire" method="post"
           action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 
@@ -607,4 +609,63 @@ function jnr_rediriger_apres_envoi( $activite_id, $resultat ) {
 
     wp_safe_redirect( add_query_arg( 'jnr', rawurlencode( $resultat ), $adresse ) );
     exit;
+}
+
+/**
+ * Fabrique le message affiché au visiteur après l'envoi du formulaire.
+ *
+ * Le code de résultat arrive par l'adresse (?jnr=ok). Il vient donc de
+ * l'extérieur, au même titre qu'un champ de formulaire : on le nettoie,
+ * puis on le compare à une liste blanche. Le texte affiché est TOUJOURS
+ * l'un des nôtres — jamais celui reçu dans l'adresse.
+ *
+ * @return string Le code HTML du message, ou une chaîne vide.
+ */
+function jnr_message_resultat() {
+
+    $code = isset( $_GET['jnr'] )
+            ? sanitize_key( wp_unslash( $_GET['jnr'] ) )
+            : '';
+
+    if ( '' === $code ) {
+        return '';
+    }
+
+    $messages = array(
+            'ok'           => array(
+                    'succes',
+                    "Votre demande a bien été envoyée. L'association vous répondra rapidement.",
+            ),
+            'consentement' => array(
+                    'erreur',
+                    "Votre demande n'a pas été envoyée : vous devez accepter la conservation de vos coordonnées.",
+            ),
+            'invalide'     => array(
+                    'erreur',
+                    "Votre demande n'a pas été envoyée : certains champs sont incomplets ou mal renseignés.",
+            ),
+            'erreur'       => array(
+                    'erreur',
+                    "Votre demande n'a pas pu être enregistrée. Merci de réessayer dans un instant.",
+            ),
+    );
+
+    // Code inconnu : on n'affiche rien plutôt que d'inventer un message.
+    if ( ! isset( $messages[ $code ] ) ) {
+        return '';
+    }
+
+    $type  = $messages[ $code ][0];
+    $texte = $messages[ $code ][1];
+
+    // « status » est annoncé discrètement par les lecteurs d'écran,
+    // « alert » les interrompt. Un succès n'a pas à interrompre.
+    $role = ( 'succes' === $type ) ? 'status' : 'alert';
+
+    return sprintf(
+            '<p class="jn-message jn-message-%1$s" role="%2$s">%3$s</p>',
+            esc_attr( $type ),
+            esc_attr( $role ),
+            esc_html( $texte )
+    );
 }
