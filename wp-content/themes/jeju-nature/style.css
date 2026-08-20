@@ -1179,3 +1179,12 @@ body {
 	color: var(--jn-gris);
 	font-size: 0.82rem;
 }
+
+/* --- 12. Le texte du bouton reste blanc dans le contenu ---
+   La règle « .site-main a » de la section 6 colore les liens en bleu.
+   Elle est plus précise que « .jn-bouton », donc elle l'emporte, et
+   le texte du bouton devient bleu sur fond bleu — invisible.
+   On ajoute ici un sélecteur encore plus précis pour rétablir le blanc. */
+.site-main a.jn-bouton {
+	color: var(--jn-blanc);
+}
