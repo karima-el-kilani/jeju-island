@@ -486,3 +486,125 @@ function jnr_code_court_formulaire( $attributs ) {
     return jnr_fabriquer_formulaire( $activite_id );
 }
 add_shortcode( 'formulaire_reservation', 'jnr_code_court_formulaire' );
+
+/**
+ * Reçoit et traite le formulaire public de réservation.
+ *
+ * Contrairement à l'enregistrement des activités, il n'y a ici AUCUN
+ * contrôle de droits : n'importe quel visiteur a le droit d'envoyer une
+ * demande. La protection ne porte donc pas sur QUI envoie, mais sur CE
+ * QUI est envoyé — d'où la validation de chaque champ, un par un.
+ */
+function jnr_traiter_reservation() {
+
+    // ---- 1. La demande vient-elle bien de notre formulaire ? (anti-CSRF)
+    $nonce = isset( $_POST['jnr_nonce_reservation'] )
+            ? sanitize_text_field( wp_unslash( $_POST['jnr_nonce_reservation'] ) )
+            : '';
+
+    if ( ! wp_verify_nonce( $nonce, 'jnr_nouvelle_reservation' ) ) {
+        jnr_rediriger_apres_envoi( 0, 'erreur' );
+    }
+
+    // ---- 2. L'activité visée existe-t-elle vraiment ?
+    $activite_id = isset( $_POST['jn_activite_id'] )
+            ? absint( wp_unslash( $_POST['jn_activite_id'] ) )
+            : 0;
+
+    if ( ! $activite_id || 'activite' !== get_post_type( $activite_id ) ) {
+        jnr_rediriger_apres_envoi( 0, 'erreur' );
+    }
+
+    // ---- 3. Le consentement RGPD est-il donné ?
+    $consentement = isset( $_POST['jn_consentement'] )
+            ? sanitize_text_field( wp_unslash( $_POST['jn_consentement'] ) )
+            : '';
+
+    if ( '1' !== $consentement ) {
+        jnr_rediriger_apres_envoi( $activite_id, 'consentement' );
+    }
+
+    // ---- 4. Nettoyage et validation de chaque champ.
+
+    $nom = isset( $_POST['jn_nom'] )
+            ? sanitize_text_field( wp_unslash( $_POST['jn_nom'] ) )
+            : '';
+    $nom = mb_substr( $nom, 0, 100 );
+
+    $email = isset( $_POST['jn_email'] )
+            ? sanitize_email( wp_unslash( $_POST['jn_email'] ) )
+            : '';
+
+    $telephone = isset( $_POST['jn_telephone'] )
+            ? sanitize_text_field( wp_unslash( $_POST['jn_telephone'] ) )
+            : '';
+    $telephone = mb_substr( $telephone, 0, 30 );
+
+    $participants = isset( $_POST['jn_participants'] )
+            ? absint( wp_unslash( $_POST['jn_participants'] ) )
+            : 0;
+
+    $message = isset( $_POST['jn_message'] )
+            ? sanitize_textarea_field( wp_unslash( $_POST['jn_message'] ) )
+            : '';
+    $message = mb_substr( $message, 0, 1000 );
+
+    // Les trois champs obligatoires doivent être exploitables.
+    if ( '' === $nom || ! is_email( $email ) || $participants < 1 || $participants > 20 ) {
+        jnr_rediriger_apres_envoi( $activite_id, 'invalide' );
+    }
+
+    // ---- 5. Création de la réservation.
+    $titre = sprintf(
+            '%1$s — %2$s (%3$d)',
+            get_the_title( $activite_id ),
+            $nom,
+            $participants
+    );
+
+    $reservation_id = wp_insert_post(
+            array(
+                    'post_type'   => 'reservation',
+                    'post_title'  => $titre,
+                    'post_status' => 'publish',
+            ),
+            true
+    );
+
+    if ( is_wp_error( $reservation_id ) ) {
+        jnr_rediriger_apres_envoi( $activite_id, 'erreur' );
+    }
+
+    // ---- 6. Enregistrement des champs.
+    update_post_meta( $reservation_id, '_jn_activite_id', $activite_id );
+    update_post_meta( $reservation_id, '_jn_nom', $nom );
+    update_post_meta( $reservation_id, '_jn_email', $email );
+    update_post_meta( $reservation_id, '_jn_telephone', $telephone );
+    update_post_meta( $reservation_id, '_jn_participants', $participants );
+    update_post_meta( $reservation_id, '_jn_message', $message );
+    update_post_meta( $reservation_id, '_jn_consentement', 1 );
+    update_post_meta( $reservation_id, '_jn_date_consentement', current_time( 'mysql' ) );
+    update_post_meta( $reservation_id, '_jn_statut_reservation', 'en_attente' );
+
+    jnr_rediriger_apres_envoi( $activite_id, 'ok' );
+}
+add_action( 'admin_post_nopriv_jnr_nouvelle_reservation', 'jnr_traiter_reservation' );
+add_action( 'admin_post_jnr_nouvelle_reservation', 'jnr_traiter_reservation' );
+
+/**
+ * Renvoie le visiteur sur la page de l'activité avec un code de résultat.
+ *
+ * Cette redirection est indispensable : sans elle, le visiteur resterait
+ * sur admin-post.php, et un simple rafraîchissement renverrait le
+ * formulaire une seconde fois.
+ *
+ * @param int    $activite_id Activité vers laquelle revenir, 0 pour l'accueil.
+ * @param string $resultat    Code de résultat à afficher.
+ */
+function jnr_rediriger_apres_envoi( $activite_id, $resultat ) {
+
+    $adresse = $activite_id ? get_permalink( $activite_id ) : home_url( '/' );
+
+    wp_safe_redirect( add_query_arg( 'jnr', rawurlencode( $resultat ), $adresse ) );
+    exit;
+}
