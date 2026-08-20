@@ -61,3 +61,63 @@ function jnr_enregistrer_type_activite() {
     register_post_type( 'activite', $reglages );
 }
 add_action( 'init', 'jnr_enregistrer_type_activite' );
+
+
+/**
+ * Déclare les deux taxonomies rattachées au type « activite ».
+ *
+ * Les deux sont hiérarchiques : dans l'écran d'édition, elles s'affichent
+ * sous forme de cases à cocher et non de champ libre. L'association choisit
+ * dans une liste, elle ne tape rien — donc aucune faute de frappe possible.
+ */
+function jnr_enregistrer_taxonomies() {
+
+    // 1. Type d'activité : Randonnée, Atelier, Visite, Patrimoine...
+    register_taxonomy(
+        'type_activite',
+        'activite',
+        array(
+            'labels'            => array(
+                'name'          => "Types d'activité",
+                'singular_name' => "Type d'activité",
+                'menu_name'     => "Types d'activité",
+                'all_items'     => 'Tous les types',
+                'edit_item'     => 'Modifier un type',
+                'add_new_item'  => 'Ajouter un type',
+                'new_item_name' => 'Nom du nouveau type',
+                'search_items'  => 'Rechercher un type',
+                'not_found'     => 'Aucun type trouvé',
+            ),
+            'hierarchical'      => true,
+            'public'            => true,
+            'show_admin_column' => true,
+            'show_in_rest'      => true,
+            'rewrite'           => array( 'slug' => 'type-activite' ),
+        )
+    );
+
+    // 2. Niveau : Facile, Intermédiaire, Difficile.
+    register_taxonomy(
+        'niveau',
+        'activite',
+        array(
+            'labels'            => array(
+                'name'          => 'Niveaux',
+                'singular_name' => 'Niveau',
+                'menu_name'     => 'Niveaux',
+                'all_items'     => 'Tous les niveaux',
+                'edit_item'     => 'Modifier un niveau',
+                'add_new_item'  => 'Ajouter un niveau',
+                'new_item_name' => 'Nom du nouveau niveau',
+                'search_items'  => 'Rechercher un niveau',
+                'not_found'     => 'Aucun niveau trouvé',
+            ),
+            'hierarchical'      => true,
+            'public'            => true,
+            'show_admin_column' => true,
+            'show_in_rest'      => true,
+            'rewrite'           => array( 'slug' => 'niveau' ),
+        )
+    );
+}
+add_action( 'init', 'jnr_enregistrer_taxonomies' );
