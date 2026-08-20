@@ -308,3 +308,181 @@ function jnr_enregistrer_details( $post_id ) {
     update_post_meta( $post_id, '_jn_statut', $statut );
 }
 add_action( 'save_post_activite', 'jnr_enregistrer_details' );
+
+/**
+ * Déclare le type de contenu « Réservation ».
+ *
+ * Contrairement aux activités, ce type n'est PAS public : une réservation
+ * contient le nom et le courriel d'un visiteur. Elle ne doit ni avoir
+ * d'adresse web, ni apparaître dans les résultats de recherche, ni être
+ * exposée par l'API REST. Elle reste en revanche consultable dans
+ * l'administration, sinon l'association ne pourrait pas la traiter.
+ */
+function jnr_enregistrer_type_reservation() {
+
+    $libelles = array(
+            'name'               => 'Réservations',
+            'singular_name'      => 'Réservation',
+            'menu_name'          => 'Réservations',
+            'add_new'            => 'Ajouter',
+            'add_new_item'       => 'Ajouter une réservation',
+            'edit_item'          => 'Consulter la réservation',
+            'new_item'           => 'Nouvelle réservation',
+            'view_item'          => 'Voir la réservation',
+            'search_items'       => 'Rechercher une réservation',
+            'all_items'          => 'Toutes les réservations',
+            'not_found'          => 'Aucune réservation',
+            'not_found_in_trash' => 'Aucune réservation dans la corbeille',
+    );
+
+    $reglages = array(
+            'labels'              => $libelles,
+
+        // Le verrou principal : aucune façade publique.
+            'public'              => false,
+
+        // On rouvre uniquement la porte de l'administration.
+            'show_ui'             => true,
+            'show_in_menu'        => true,
+            'menu_position'       => 6,
+            'menu_icon'           => 'dashicons-tickets-alt',
+
+        // Les trois lignes suivantes découlent déjà de « public => false ».
+        // On les écrit quand même : l'intention doit être lisible par
+        // quelqu'un qui relit le code, et elle résiste à une modification
+        // distraite de la ligne du dessus.
+            'publicly_queryable'  => false,
+            'exclude_from_search' => true,
+            'has_archive'         => false,
+
+        // L'API REST exposerait ces données à qui sait la lire.
+            'show_in_rest'        => false,
+
+        // Seul le titre nous sert : tout le reste vit en champs
+        // personnalisés. Pas d'éditeur, pas d'extrait, pas d'image.
+            'supports'            => array( 'title' ),
+    );
+
+    register_post_type( 'reservation', $reglages );
+}
+add_action( 'init', 'jnr_enregistrer_type_reservation' );
+
+/**
+ * Fabrique le formulaire de réservation d'une activité.
+ *
+ * Cette fonction RENVOIE le code HTML, elle n'affiche rien elle-même.
+ * C'est ce qui permet de s'en servir aussi bien depuis un code court
+ * que depuis un fichier modèle du thème.
+ *
+ * @param int $activite_id Identifiant de l'activité concernée.
+ * @return string Le code HTML du formulaire, ou une chaîne vide.
+ */
+function jnr_fabriquer_formulaire( $activite_id ) {
+
+    $activite_id = absint( $activite_id );
+
+    // Garde-fou : sans activité valide, on ne fabrique rien du tout.
+    if ( ! $activite_id || 'activite' !== get_post_type( $activite_id ) ) {
+        return '';
+    }
+
+    // On capture l'affichage au lieu de le laisser partir vers le navigateur.
+    ob_start();
+    ?>
+
+    <form class="jn-formulaire" method="post"
+          action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+
+        <h2>Réserver cette sortie</h2>
+
+        <?php wp_nonce_field( 'jnr_nouvelle_reservation', 'jnr_nonce_reservation' ); ?>
+
+        <input type="hidden" name="action" value="jnr_nouvelle_reservation">
+        <input type="hidden" name="jn_activite_id"
+               value="<?php echo esc_attr( $activite_id ); ?>">
+
+        <p>
+            <label for="jn_nom">Nom et prénom <span class="jn-obligatoire">*</span></label><br>
+            <input type="text" id="jn_nom" name="jn_nom" required maxlength="100">
+        </p>
+
+        <p>
+            <label for="jn_email">Adresse électronique <span class="jn-obligatoire">*</span></label><br>
+            <input type="email" id="jn_email" name="jn_email" required maxlength="100">
+        </p>
+
+        <p>
+            <label for="jn_telephone">Téléphone</label><br>
+            <input type="tel" id="jn_telephone" name="jn_telephone" maxlength="30">
+        </p>
+
+        <p>
+            <label for="jn_participants">Nombre de participants <span class="jn-obligatoire">*</span></label><br>
+            <input type="number" id="jn_participants" name="jn_participants"
+                   min="1" max="20" step="1" value="1" required>
+        </p>
+
+        <p>
+            <label for="jn_message">Message (facultatif)</label><br>
+            <textarea id="jn_message" name="jn_message" rows="4" maxlength="1000"></textarea>
+        </p>
+
+        <p>
+            <input type="checkbox" id="jn_consentement" name="jn_consentement" value="1" required>
+            <label for="jn_consentement">
+                J'accepte que mes coordonnées soient conservées par l'association
+                pour le traitement de cette demande.
+                <span class="jn-obligatoire">*</span>
+            </label>
+            <?php
+            $page_confidentialite = get_privacy_policy_url();
+            if ( $page_confidentialite ) :
+                ?>
+                <br>
+                <a href="<?php echo esc_url( $page_confidentialite ); ?>">
+                    Politique de confidentialité
+                </a>
+            <?php endif; ?>
+        </p>
+
+        <p>
+            <button type="submit" class="jn-bouton">Envoyer ma demande</button>
+        </p>
+
+        <p class="jn-meta">Les champs marqués d'une étoile sont obligatoires.</p>
+
+    </form>
+
+    <?php
+    // On récupère ce qui a été capturé, et on vide le seau.
+    return ob_get_clean();
+}
+
+/**
+ * Déclare le code court [formulaire_reservation].
+ *
+ * Un code court se comporte comme un filtre : il doit RENVOYER
+ * son contenu. S'il l'affichait avec echo, le formulaire
+ * apparaîtrait tout en haut de la page au lieu d'être à sa place.
+ *
+ * @param array $attributs Les attributs écrits dans le code court.
+ * @return string Le code HTML du formulaire.
+ */
+function jnr_code_court_formulaire( $attributs ) {
+
+    $attributs = shortcode_atts(
+            array( 'activite' => 0 ),
+            $attributs,
+            'formulaire_reservation'
+    );
+
+    $activite_id = absint( $attributs['activite'] );
+
+    // Sans attribut, on prend l'activité de la page en cours.
+    if ( ! $activite_id ) {
+        $activite_id = get_the_ID();
+    }
+
+    return jnr_fabriquer_formulaire( $activite_id );
+}
+add_shortcode( 'formulaire_reservation', 'jnr_code_court_formulaire' );
