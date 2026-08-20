@@ -1369,3 +1369,120 @@ body {
 	width: auto;
 	height: auto;
 }
+
+/* --- 16. Page d'une activité --- */
+
+.jn-fil {
+	margin-bottom: .5rem;
+	font-size: .9rem;
+}
+
+.jn-activite-entete .entry-title {
+	margin: 0 0 .75rem;
+}
+
+.jn-activite-classements a {
+	display: inline-block;
+	padding: .2rem .7rem;
+	margin: 0 .3rem .3rem 0;
+	font-size: .82rem;
+	font-weight: 600;
+	text-decoration: none;
+	background-color: var(--jn-bleu-pale);
+	color: var(--jn-bleu-fonce);
+	border-radius: 999px;
+}
+
+.jn-activite-image {
+	margin: 1.5rem 0 2rem;
+}
+
+.jn-activite-image img {
+	width: 100%;
+	height: auto;
+	max-height: 460px;
+	object-fit: cover;
+	border-radius: 8px;
+	display: block;
+}
+
+.jn-activite-colonnes {
+	display: grid;
+	grid-template-columns: 2fr 1fr;
+	gap: 3rem;
+	align-items: start;
+}
+
+.jn-activite-infos {
+	padding: 1.5rem;
+	background-color: var(--jn-gris-clair);
+	border: 1px solid var(--jn-filet);
+	border-radius: 8px;
+}
+
+.jn-activite-infos h2 {
+	margin: 0 0 1rem;
+	font-size: 1.05rem;
+}
+
+.jn-infos-liste {
+	margin: 0;
+}
+
+.jn-infos-liste dt {
+	font-size: .78rem;
+	font-weight: 700;
+	letter-spacing: .05em;
+	text-transform: uppercase;
+	color: var(--jn-gris);
+}
+
+.jn-infos-liste dd {
+	margin: .15rem 0 1rem;
+	font-size: 1rem;
+}
+
+.jn-infos-liste dd:last-child {
+	margin-bottom: 0;
+}
+
+.jn-activite-reservation {
+	max-width: 40rem;
+	margin: 3rem 0 0;
+	padding-top: 2.5rem;
+	border-top: 1px solid var(--jn-filet);
+}
+
+.jn-formulaire input[type="text"],
+.jn-formulaire input[type="email"],
+.jn-formulaire input[type="tel"],
+.jn-formulaire input[type="number"],
+.jn-formulaire textarea {
+	width: 100%;
+	max-width: 26rem;
+	padding: .55rem .7rem;
+	border: 1px solid var(--jn-filet);
+	border-radius: 4px;
+	font-size: 1rem;
+	font-family: inherit;
+}
+
+.jn-formulaire label {
+	font-weight: 600;
+	font-size: .95rem;
+}
+
+.jn-activite-suite {
+	margin-top: 3rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--jn-filet);
+	font-size: .95rem;
+}
+
+/* Une seule colonne sur écran étroit. */
+@media (max-width: 800px) {
+	.jn-activite-colonnes {
+		grid-template-columns: 1fr;
+		gap: 2rem;
+	}
+}
