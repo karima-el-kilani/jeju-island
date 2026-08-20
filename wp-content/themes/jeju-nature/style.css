@@ -1213,3 +1213,159 @@ body {
 .jn-obligatoire {
 	color: #C0392B;
 }
+
+
+/* --- 14. Liste des activités : filtres et vignettes --- */
+
+.jn-chapo {
+	font-size: 1.1rem;
+	color: var(--jn-gris);
+	max-width: 42rem;
+}
+
+.jn-filtres {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem 1.5rem;
+	align-items: flex-end;
+	padding: 1.25rem 1.5rem;
+	margin-bottom: 2.5rem;
+	background-color: var(--jn-gris-clair);
+	border: 1px solid var(--jn-filet);
+	border-radius: 8px;
+}
+
+.jn-filtre {
+	display: flex;
+	flex-direction: column;
+	gap: .35rem;
+}
+
+.jn-filtre label {
+	font-size: .85rem;
+	font-weight: 600;
+	color: var(--jn-gris);
+}
+
+.jn-filtre select,
+.jn-filtre input[type="date"] {
+	padding: .5rem .6rem;
+	border: 1px solid var(--jn-filet);
+	border-radius: 4px;
+	background-color: var(--jn-blanc);
+	font-size: .95rem;
+}
+
+.jn-filtre-boutons {
+	flex-direction: row;
+	align-items: center;
+	gap: 1rem;
+}
+
+.jn-lien-discret {
+	font-size: .9rem;
+	color: var(--jn-gris);
+}
+
+/* La grille des vignettes. */
+.jn-grille {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+	gap: 2rem;
+}
+
+.jn-carte {
+	display: flex;
+	flex-direction: column;
+	background-color: var(--jn-blanc);
+	border: 1px solid var(--jn-filet);
+	border-radius: 8px;
+	overflow: hidden;
+	transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.jn-carte:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
+}
+
+.jn-carte-image {
+	display: block;
+	aspect-ratio: 3 / 2;
+	background-color: var(--jn-gris-clair);
+	overflow: hidden;
+}
+
+.jn-carte-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.jn-carte-vide {
+	display: block;
+	width: 100%;
+	height: 100%;
+	background-color: var(--jn-bleu-pale);
+}
+
+.jn-carte-corps {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	padding: 1.1rem 1.25rem 1.25rem;
+}
+
+.jn-carte-type {
+	margin: 0 0 .4rem;
+	font-size: .78rem;
+	font-weight: 700;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+	color: var(--jn-bleu);
+}
+
+.jn-carte-titre {
+	margin: 0 0 .5rem;
+	font-size: 1.15rem;
+	line-height: 1.3;
+}
+
+.site-main .jn-carte-titre a {
+	color: var(--jn-texte);
+	text-decoration: none;
+}
+
+.site-main .jn-carte-titre a:hover {
+	color: var(--jn-bleu);
+}
+
+.jn-carte-extrait {
+	flex: 1;
+	margin: .5rem 0 1rem;
+	font-size: .95rem;
+	color: var(--jn-gris);
+}
+
+.jn-carte-pied {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 0;
+	padding-top: .85rem;
+	border-top: 1px solid var(--jn-filet);
+	font-size: .9rem;
+}
+
+.jn-tarif {
+	font-weight: 700;
+	color: var(--jn-texte);
+}
+
+/* --- 15. Taille du logo --- */
+.site-branding .custom-logo {
+	max-height: 100px;
+	width: auto;
+	height: auto;
+}

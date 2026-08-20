@@ -160,4 +160,93 @@ require get_template_directory() . '/inc/template-tags.php';
 require get_template_directory() . '/inc/template-functions.php';
 
 
+/**
+ * Applique les filtres de l'archive des activités.
+ *
+ * On modifie la requête principale plutôt que d'en créer une seconde :
+ * la pagination et le comptage restent cohérents.
+ *
+ * Quatre critères : type d'activité, niveau, tarif, date de départ.
+ *
+ * @param WP_Query $query La requête en cours de préparation.
+ */
+function jeju_nature_filtrer_activites( $query ) {
 
+    // Uniquement la requête principale du site public,
+    // et uniquement sur la page de liste des activités.
+    if ( is_admin() || ! $query->is_main_query() ) {
+        return;
+    }
+    if ( ! $query->is_post_type_archive( 'activite' ) ) {
+        return;
+    }
+
+    $query->set( 'posts_per_page', 12 );
+
+    // Tri chronologique sur la date de sortie, pas sur la date de publication.
+    $query->set( 'meta_key', '_jn_date' );
+    $query->set( 'orderby', 'meta_value' );
+    $query->set( 'order', 'ASC' );
+
+    $filtres_taxonomies = array();
+    $filtres_champs     = array();
+
+    // --- Critère 1 : le type d'activité.
+    $type = isset( $_GET['jn_type'] ) ? sanitize_title( wp_unslash( $_GET['jn_type'] ) ) : '';
+    if ( $type ) {
+        $filtres_taxonomies[] = array(
+            'taxonomy' => 'type_activite',
+            'field'    => 'slug',
+            'terms'    => $type,
+        );
+    }
+
+    // --- Critère 2 : le niveau de difficulté.
+    $niveau = isset( $_GET['jn_niveau'] ) ? sanitize_title( wp_unslash( $_GET['jn_niveau'] ) ) : '';
+    if ( $niveau ) {
+        $filtres_taxonomies[] = array(
+            'taxonomy' => 'niveau',
+            'field'    => 'slug',
+            'terms'    => $niveau,
+        );
+    }
+
+    // --- Critère 3 : gratuit ou payant.
+    $tarif = isset( $_GET['jn_tarif'] ) ? sanitize_key( wp_unslash( $_GET['jn_tarif'] ) ) : '';
+    if ( 'gratuit' === $tarif ) {
+        $filtres_champs[] = array(
+            'key'     => '_jn_tarif',
+            'value'   => 0,
+            'compare' => '=',
+            'type'    => 'NUMERIC',
+        );
+    } elseif ( 'payant' === $tarif ) {
+        $filtres_champs[] = array(
+            'key'     => '_jn_tarif',
+            'value'   => 0,
+            'compare' => '>',
+            'type'    => 'NUMERIC',
+        );
+    }
+
+    // --- Critère 4 : à partir d'une date.
+    $apres = isset( $_GET['jn_apres'] ) ? sanitize_text_field( wp_unslash( $_GET['jn_apres'] ) ) : '';
+    if ( $apres && preg_match( '/^\d{4}-\d{2}-\d{2}$/', $apres ) ) {
+        $filtres_champs[] = array(
+            'key'     => '_jn_date',
+            'value'   => $apres,
+            'compare' => '>=',
+            'type'    => 'DATE',
+        );
+    }
+
+    if ( $filtres_taxonomies ) {
+        $filtres_taxonomies['relation'] = 'AND';
+        $query->set( 'tax_query', $filtres_taxonomies );
+    }
+    if ( $filtres_champs ) {
+        $filtres_champs['relation'] = 'AND';
+        $query->set( 'meta_query', $filtres_champs );
+    }
+}
+add_action( 'pre_get_posts', 'jeju_nature_filtrer_activites' );
