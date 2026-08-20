@@ -669,3 +669,153 @@ function jnr_message_resultat() {
             esc_html( $texte )
     );
 }
+
+/**
+ * Déclare la fiche de consultation d'une réservation.
+ */
+function jnr_ajouter_metaboite_reservation() {
+    add_meta_box(
+            'jnr_details_reservation',
+            'Détails de la demande',
+            'jnr_afficher_metaboite_reservation',
+            'reservation',
+            'normal',
+            'high'
+    );
+}
+add_action( 'add_meta_boxes', 'jnr_ajouter_metaboite_reservation' );
+
+/**
+ * Affiche la fiche d'une réservation.
+ *
+ * Les données saisies par le visiteur sont affichées en LECTURE SEULE :
+ * l'association traite une demande, elle ne la réécrit pas. Seul le
+ * statut de traitement est modifiable.
+ *
+ * @param WP_Post $post La réservation consultée.
+ */
+function jnr_afficher_metaboite_reservation( $post ) {
+
+    wp_nonce_field( 'jnr_enregistrer_reservation', 'jnr_nonce_reservation_admin' );
+
+    $activite_id  = (int) get_post_meta( $post->ID, '_jn_activite_id', true );
+    $nom          = get_post_meta( $post->ID, '_jn_nom', true );
+    $email        = get_post_meta( $post->ID, '_jn_email', true );
+    $telephone    = get_post_meta( $post->ID, '_jn_telephone', true );
+    $participants = (int) get_post_meta( $post->ID, '_jn_participants', true );
+    $message      = get_post_meta( $post->ID, '_jn_message', true );
+    $consentement = get_post_meta( $post->ID, '_jn_consentement', true );
+    $date_consent = get_post_meta( $post->ID, '_jn_date_consentement', true );
+    $statut       = get_post_meta( $post->ID, '_jn_statut_reservation', true );
+
+    if ( '' === $statut ) {
+        $statut = 'en_attente';
+    }
+    ?>
+
+    <table class="form-table" role="presentation">
+        <tr>
+            <th scope="row">Activité demandée</th>
+            <td>
+                <?php if ( $activite_id && 'activite' === get_post_type( $activite_id ) ) : ?>
+                    <a href="<?php echo esc_url( get_edit_post_link( $activite_id ) ); ?>">
+                        <?php echo esc_html( get_the_title( $activite_id ) ); ?>
+                    </a>
+                <?php else : ?>
+                    <em>Activité introuvable (supprimée ?)</em>
+                <?php endif; ?>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">Nom et prénom</th>
+            <td><?php echo esc_html( $nom ); ?></td>
+        </tr>
+        <tr>
+            <th scope="row">Adresse électronique</th>
+            <td>
+                <a href="mailto:<?php echo esc_attr( $email ); ?>">
+                    <?php echo esc_html( $email ); ?>
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">Téléphone</th>
+            <td><?php echo $telephone ? esc_html( $telephone ) : '<em>non renseigné</em>'; ?></td>
+        </tr>
+        <tr>
+            <th scope="row">Nombre de participants</th>
+            <td><?php echo esc_html( $participants ); ?></td>
+        </tr>
+        <tr>
+            <th scope="row">Message</th>
+            <td><?php echo $message ? nl2br( esc_html( $message ) ) : '<em>aucun</em>'; ?></td>
+        </tr>
+        <tr>
+            <th scope="row">Consentement RGPD</th>
+            <td>
+                <?php if ( $consentement ) : ?>
+                    Accordé le <?php echo esc_html( $date_consent ); ?>
+                <?php else : ?>
+                    <strong>Non accordé</strong>
+                <?php endif; ?>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">
+                <label for="jn_statut_reservation">Statut de traitement</label>
+            </th>
+            <td>
+                <select id="jn_statut_reservation" name="jn_statut_reservation">
+                    <option value="en_attente" <?php selected( $statut, 'en_attente' ); ?>>En attente</option>
+                    <option value="acceptee"   <?php selected( $statut, 'acceptee' ); ?>>Acceptée</option>
+                    <option value="refusee"    <?php selected( $statut, 'refusee' ); ?>>Refusée</option>
+                </select>
+                <p class="description">
+                    Seules les demandes acceptées sont décomptées des places disponibles.
+                </p>
+            </td>
+        </tr>
+    </table>
+
+    <?php
+}
+
+/**
+ * Enregistre le statut de traitement d'une réservation.
+ *
+ * Un seul champ est enregistré : le statut. Les coordonnées du visiteur
+ * ne sont jamais réécrites depuis l'administration.
+ *
+ * @param int $post_id Identifiant de la réservation.
+ */
+function jnr_enregistrer_reservation( $post_id ) {
+
+    if ( ! isset( $_POST['jnr_nonce_reservation_admin'] ) ) {
+        return;
+    }
+    $nonce = sanitize_text_field( wp_unslash( $_POST['jnr_nonce_reservation_admin'] ) );
+    if ( ! wp_verify_nonce( $nonce, 'jnr_enregistrer_reservation' ) ) {
+        return;
+    }
+
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+        return;
+    }
+
+    if ( ! current_user_can( 'edit_post', $post_id ) ) {
+        return;
+    }
+
+    $statuts_autorises = array( 'en_attente', 'acceptee', 'refusee' );
+    $statut            = 'en_attente';
+
+    if ( isset( $_POST['jn_statut_reservation'] ) ) {
+        $saisie = sanitize_text_field( wp_unslash( $_POST['jn_statut_reservation'] ) );
+        if ( in_array( $saisie, $statuts_autorises, true ) ) {
+            $statut = $saisie;
+        }
+    }
+
+    update_post_meta( $post_id, '_jn_statut_reservation', $statut );
+}
+add_action( 'save_post_reservation', 'jnr_enregistrer_reservation' );
