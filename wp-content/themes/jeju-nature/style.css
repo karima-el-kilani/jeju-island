@@ -1486,3 +1486,148 @@ body {
 		gap: 2rem;
 	}
 }
+
+/* --- 17. Page d'accueil : image panoramique --- */
+
+/* Sur l'accueil, l'en-tête se pose PAR-DESSUS l'image. */
+body.home #page {
+	position: relative;
+}
+
+body.home .site-header {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 10;
+	background-color: transparent;
+	border-bottom: none;
+}
+
+body.home .site-header a,
+body.home .site-title a,
+body.home .main-navigation a {
+	color: var(--jn-blanc);
+}
+
+/* Le titre du site fait doublon avec celui de l'image : on le retire
+   pour ne garder qu'un seul titre de niveau 1 sur la page (§12). */
+body.home .site-title,
+body.home .site-description {
+	display: none;
+}
+
+.jn-hero {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 78vh;
+	padding: 8rem 1.5rem 5rem;
+	background-color: var(--jn-texte);
+	background-size: cover;
+	background-position: center;
+	text-align: center;
+}
+
+/* Un voile sombre : garantit la lisibilité du texte et du menu,
+   quelle que soit la photo choisie par l'association. */
+.jn-hero::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+			to bottom,
+			rgba(0, 0, 0, .55) 0%,
+			rgba(0, 0, 0, .25) 45%,
+			rgba(0, 0, 0, .50) 100%
+	);
+}
+
+.jn-hero-contenu {
+	position: relative;
+	z-index: 2;
+	max-width: 44rem;
+	color: var(--jn-blanc);
+}
+
+.jn-hero-titre {
+	margin: 0 0 1rem;
+	font-size: clamp(2rem, 5vw, 3.2rem);
+	line-height: 1.15;
+	color: var(--jn-blanc);
+	text-shadow: 0 2px 12px rgba(0, 0, 0, .35);
+}
+
+.jn-hero-texte {
+	margin: 0 auto 2rem;
+	max-width: 34rem;
+	font-size: 1.1rem;
+	color: var(--jn-blanc);
+	text-shadow: 0 1px 8px rgba(0, 0, 0, .35);
+}
+
+.jn-bouton-clair {
+	background-color: var(--jn-blanc);
+	color: var(--jn-texte);
+}
+
+.site-main a.jn-bouton-clair,
+.jn-hero a.jn-bouton-clair {
+	color: var(--jn-texte);
+}
+
+/* Les blocs de la page d'accueil. */
+.jn-accueil-bloc {
+	margin: 4rem 0;
+}
+
+.jn-accueil-titre {
+	margin-bottom: 1.75rem;
+}
+
+.jn-accueil-lien {
+	margin-top: 2.5rem;
+	text-align: center;
+}
+
+.jn-accueil-presentation {
+	max-width: 44rem;
+}
+
+@media (max-width: 700px) {
+	.jn-hero {
+		min-height: 60vh;
+		padding: 6.5rem 1.25rem 4rem;
+	}
+}
+/* --- 17 bis. Dégager le titre de l'image sous l'en-tête --- */
+.jn-hero {
+	align-items: flex-end;
+	padding-top: 15rem;
+	padding-bottom: 4.5rem;
+}
+
+@media (max-width: 700px) {
+	.jn-hero {
+		padding-top: 12rem;
+		padding-bottom: 3.5rem;
+	}
+}
+
+/* --- 17 ter. Le nom du site revient dans l'en-tête (plus de logo) --- */
+body.home .site-title {
+	display: block;
+}
+
+body.home .site-title a {
+	color: var(--jn-blanc);
+	text-decoration: none;
+	text-shadow: 0 1px 8px rgba(0, 0, 0, .4);
+}
+
+
+/* --- 18. Relief des vignettes --- */
+.jn-carte {
+	box-shadow: 0 1px 3px rgba(0, 0, 0, .06), 0 6px 16px rgba(0, 0, 0, .05);
+}

@@ -250,3 +250,25 @@ function jeju_nature_filtrer_activites( $query ) {
     }
 }
 add_action( 'pre_get_posts', 'jeju_nature_filtrer_activites' );
+
+/**
+ * Active l'image panoramique de la page d'accueil.
+ *
+ * On passe par la fonctionnalité native « image d'en-tête » plutôt que
+ * par une image codée en dur : l'association peut ainsi la changer
+ * depuis Apparence → Personnaliser, sans toucher au code (§19).
+ */
+function jeju_nature_image_haut() {
+    add_theme_support(
+        'custom-header',
+        array(
+            'default-image' => '',
+            'width'         => 1920,
+            'height'        => 900,
+            'flex-width'    => true,
+            'flex-height'   => true,
+            'header-text'   => false,
+        )
+    );
+}
+add_action( 'after_setup_theme', 'jeju_nature_image_haut' );
