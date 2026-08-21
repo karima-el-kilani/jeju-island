@@ -1365,7 +1365,7 @@ body {
 
 /* --- 15. Taille du logo --- */
 .site-branding .custom-logo {
-	max-height: 90px;
+	max-height: 60px;
 	width: auto;
 	height: auto;
 }
@@ -1638,7 +1638,7 @@ body.home .site-title a {
 
 /* Le menu : plus grand, plus gras, plus aéré. */
 .main-navigation a {
-	font-size: 1.15rem;
+	font-size: 1rem;
 	font-weight: 600;
 	padding: .5rem .9rem;
 }
@@ -1736,4 +1736,110 @@ body.home .site-description {
 	font-size: 0.95rem;
 	line-height: 1.4;
 	opacity: .85;
+}
+
+/* --- 32. Bloc de texte remonté, image inchangée --- */
+.jn-hero-contenu {
+	transform: translateY(-3rem);
+}
+
+/* --- 33. Logo à gauche, menu en haut à droite --- */
+body .site-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem 2rem;
+	max-width: var(--jn-largeur);
+	margin-left: auto;
+	margin-right: auto;
+}
+
+body .site-header > .site-branding,
+body .site-header > .main-navigation {
+	max-width: none;
+	margin-left: 0;
+	margin-right: 0;
+	width: auto;
+}
+
+body .site-header > .main-navigation {
+	margin-left: auto;
+}
+
+body .main-navigation > div > ul,
+body .main-navigation ul#primary-menu {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.25rem 1.25rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	float: none;
+}
+
+body .main-navigation li {
+	float: none;
+	position: relative;
+}
+
+@media (max-width: 780px) {
+	body .site-header > .main-navigation {
+		margin-left: 0;
+		width: 100%;
+	}
+}
+
+/* --- 34. Menu en pastilles --- */
+
+/* Aucun soulignement dans le menu, nulle part. */
+.main-navigation a,
+.main-navigation a:hover,
+.main-navigation a:focus {
+	text-decoration: none;
+}
+
+/* La forme commune : une pastille arrondie. */
+.main-navigation a {
+	display: inline-block;
+	padding: .45rem 1.1rem;
+	border-radius: 999px;
+	border: 1px solid transparent;
+	transition: background-color .18s ease, border-color .18s ease, color .18s ease;
+}
+
+/* --- Sur l'image d'accueil : verre dépoli, texte blanc --- */
+body.home .main-navigation a {
+	color: #FFFFFF;
+	border-color: rgba(255, 255, 255, .55);
+	background-color: rgba(255, 255, 255, .12);
+	-webkit-backdrop-filter: blur(8px);
+	backdrop-filter: blur(8px);
+}
+
+body.home .main-navigation a:hover,
+body.home .main-navigation a:focus {
+	background-color: rgba(255, 255, 255, .28);
+	border-color: rgba(255, 255, 255, .9);
+	color: #FFFFFF;
+}
+
+/* --- Sur les autres pages : fond clair, texte foncé --- */
+body:not(.home) .main-navigation a {
+	color: var(--jn-texte);
+	border-color: var(--jn-filet);
+	background-color: transparent;
+}
+
+body:not(.home) .main-navigation a:hover,
+body:not(.home) .main-navigation a:focus {
+	background-color: var(--jn-bleu-pale);
+	border-color: var(--jn-bleu);
+	color: var(--jn-bleu-fonce);
+}
+
+/* --- 36. Logo décalé vers la gauche --- */
+body .site-header > .site-branding {
+	margin-left: -2.75rem;
 }

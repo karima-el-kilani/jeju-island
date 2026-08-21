@@ -7,7 +7,12 @@
 !/documentation/
 !/wp-content/
 
-# Dans wp-content, on ne garde que thèmes, extensions et médias
+# Dans documentation, uniquement l'export de la base.
+# Les documents écrits sont remis séparément.
+/documentation/*
+!/documentation/jeju-nature.sql
+
+# Dans wp-content, uniquement thèmes, extensions et médias
 /wp-content/*
 !/wp-content/themes/
 !/wp-content/plugins/
