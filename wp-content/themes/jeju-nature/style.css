@@ -1365,7 +1365,7 @@ body {
 
 /* --- 15. Taille du logo --- */
 .site-branding .custom-logo {
-	max-height: 100px;
+	max-height: 90px;
 	width: auto;
 	height: auto;
 }
@@ -1510,11 +1510,13 @@ body.home .main-navigation a {
 	color: var(--jn-blanc);
 }
 
-/* Le titre du site fait doublon avec celui de l'image : on le retire
-   pour ne garder qu'un seul titre de niveau 1 sur la page (§12). */
-body.home .site-title,
+/* Le logo ne porte pas de texte : le nom du site et le slogan
+   restent affichés, en blanc sur l'image. */
+body.home .site-title a,
 body.home .site-description {
-	display: none;
+	color: var(--jn-blanc);
+	text-decoration: none;
+	text-shadow: 0 1px 8px rgba(0, 0, 0, .45);
 }
 
 .jn-hero {
@@ -1630,4 +1632,108 @@ body.home .site-title a {
 /* --- 18. Relief des vignettes --- */
 .jn-carte {
 	box-shadow: 0 1px 3px rgba(0, 0, 0, .06), 0 6px 16px rgba(0, 0, 0, .05);
+}
+
+/* --- 26. Lisibilité du menu et du texte d'accueil --- */
+
+/* Le menu : plus grand, plus gras, plus aéré. */
+.main-navigation a {
+	font-size: 1.15rem;
+	font-weight: 600;
+	padding: .5rem .9rem;
+}
+
+/* Sur l'image d'accueil, une ombre décolle le texte blanc du fond. */
+body.home .main-navigation a,
+body.home .site-title a,
+body.home .site-description {
+	color: #FFFFFF;
+	text-shadow: 0 2px 10px rgba(0, 0, 0, .65);
+}
+
+/* La phrase sous le titre : taille variable selon la largeur d'écran. */
+.jn-hero-texte {
+	max-width: 38rem;
+	margin: 0 auto 2.25rem;
+	font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+	line-height: 1.5;
+	text-shadow: 0 2px 10px rgba(0, 0, 0, .5);
+}
+
+/* Un voile plus dense en haut de l'image, pour le contraste du menu. */
+.jn-hero::after {
+	background: linear-gradient(
+			to bottom,
+			rgba(0, 0, 0, .72) 0%,
+			rgba(0, 0, 0, .30) 45%,
+			rgba(0, 0, 0, .50) 100%
+	);
+}
+
+/* --- 27. Plus d'air sous le menu, image plus sombre --- */
+
+.jn-hero {
+	padding-top: 17rem;
+	padding-bottom: 5rem;
+}
+
+.jn-hero::after {
+	background: linear-gradient(
+			to bottom,
+			rgba(0, 0, 0, .78) 0%,
+			rgba(0, 0, 0, .52) 45%,
+			rgba(0, 0, 0, .62) 100%
+	);
+}
+
+@media (max-width: 700px) {
+	.jn-hero {
+		padding-top: 13rem;
+		padding-bottom: 3.5rem;
+	}
+}
+
+/* --- 29. Logo remonté dans l'en-tête, sur toutes les pages --- */
+.site-header {
+	padding-top: 0.5rem;
+}
+
+/* --- 30. Vignettes légèrement grises --- */
+.jn-carte {
+	background-color: var(--jn-gris-clair);
+	border-color: var(--jn-filet);
+}
+
+.jn-carte-pied {
+	border-top-color: var(--jn-filet);
+}
+
+.jn-carte-vide {
+	background-color: var(--jn-filet);
+}
+
+.jn-carte:hover {
+	box-shadow: 0 8px 22px rgba(0, 0, 0, .10);
+}
+
+
+/* --- 31. Logo, titre et slogan alignés sur le même axe --- */
+.site-branding {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem 0.9rem;
+}
+
+.site-branding .site-title {
+	margin: 0;
+	line-height: 1.25;
+	white-space: nowrap;
+}
+
+.site-branding .site-description {
+	margin: 0;
+	font-size: 0.95rem;
+	line-height: 1.4;
+	opacity: .85;
 }
